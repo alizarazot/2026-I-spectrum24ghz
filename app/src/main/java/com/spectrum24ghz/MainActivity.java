@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
         binding.tabList.setOnClickListener(v -> selectTab(0));
         binding.tabChannels.setOnClickListener(v -> selectTab(1));
         binding.tabTime.setOnClickListener(v -> selectTab(2));
+        binding.tabStats.setOnClickListener(v -> selectTab(3));
 
         // Start auto update polling task
         autoUpdateHandler.post(autoUpdateTask);
@@ -155,10 +156,12 @@ public class MainActivity extends AppCompatActivity {
         binding.tvTabListText.setTextColor(tabIndex == 0 ? colorSelected : colorUnselected);
         binding.tvTabChannelsText.setTextColor(tabIndex == 1 ? colorSelected : colorUnselected);
         binding.tvTabTimeText.setTextColor(tabIndex == 2 ? colorSelected : colorUnselected);
+        binding.tvTabStatsText.setTextColor(tabIndex == 3 ? colorSelected : colorUnselected);
 
         binding.rvChannels.setVisibility(tabIndex == 0 ? View.VISIBLE : View.GONE);
         binding.rvChannelsList.setVisibility(tabIndex == 1 ? View.VISIBLE : View.GONE);
         binding.timeGraph.setVisibility(tabIndex == 2 ? View.VISIBLE : View.GONE);
+        binding.scrollStats.setVisibility(tabIndex == 3 ? View.VISIBLE : View.GONE);
         
         // Refresh values instantly
         if (tabIndex == 0) {
@@ -167,7 +170,33 @@ public class MainActivity extends AppCompatActivity {
             channelListAdapter.notifyDataSetChanged();
         } else if (tabIndex == 2) {
             binding.timeGraph.updateHistory(scanHistory);
+        } else if (tabIndex == 3) {
+            updateStatisticsView();
         }
+    }
+
+    private void updateStatisticsView() {
+        int[] qCounts = new int[4];
+        int[] cCounts = new int[14];
+        java.util.Map<String, Integer> sCounts = new java.util.LinkedHashMap<>();
+
+        for (ScannedNetwork net : scannedNetworks) {
+            int percent = net.getSignalPercent();
+            if (percent >= 85) qCounts[0]++;
+            else if (percent >= 60) qCounts[1]++;
+            else if (percent >= 35) qCounts[2]++;
+            else qCounts[3]++;
+
+            int ch = net.getChannel();
+            if (ch >= 1 && ch <= 14) {
+                cCounts[ch - 1]++;
+            }
+
+            String sec = net.getSecurityLabel();
+            sCounts.put(sec, sCounts.getOrDefault(sec, 0) + 1);
+        }
+
+        binding.statsGraph.updateData(qCounts, cCounts, sCounts);
     }
 
     private void showNetworkDetailsDialog(ScannedNetwork net) {
@@ -307,6 +336,10 @@ public class MainActivity extends AppCompatActivity {
         // Update graph view
         binding.timeGraph.updateHistory(scanHistory);
         
+        if (currentTab == 3) {
+            updateStatisticsView();
+        }
+
         setScanningState(false);
 
         String hora  = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
@@ -324,6 +357,9 @@ public class MainActivity extends AppCompatActivity {
         populateNetworks();
         networkAdapter.notifyDataSetChanged();
         channelListAdapter.notifyDataSetChanged();
+        if (currentTab == 3) {
+            updateStatisticsView();
+        }
     }
 
     @SuppressLint("MissingPermission")

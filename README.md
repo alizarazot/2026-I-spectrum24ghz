@@ -25,6 +25,7 @@ Este projecto fue hecho por estudiantes de la [Universidad Francisco de Paula Sa
 Las siguientes personas participaron en el proyecto (ordenados por código de forma ascendente):
 
  - **0192007:** Luisa Fernanda Acosta Vergel.
+ - **0192018:** Angelo Andree Acosta Manzano.
  - **0192019:** Stefanny Ximena Páez Bayona.
  - **0192041:** Jairo Alonso Ramos Méndez.
  - **0192092:** Paula Johanna García Rodríguez.

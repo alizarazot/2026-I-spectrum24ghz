@@ -155,7 +155,7 @@
                 android:id="@+id/rvChannelsList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="6dp"
+                android:paddingVertical="6dp"
                 android:clipToPadding="false"
                 android:visibility="gone"
                 tools:listitem="@layout/item_channel_list" />
@@ -166,6 +166,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="gone" />
+
+            <!-- Vista 4: Estadísticas -->
+            <ScrollView
+                android:id="@+id/scrollStats"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+                <com.spectrum24ghz.StatisticsGraphView
+                    android:id="@+id/statsGraph"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </ScrollView>
 
         </FrameLayout>
 
@@ -254,7 +267,34 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Gráfico Tiempo"
-                    android:textSize="11.5sp"
+                    android:textSize="11sp"
+                    android:textColor="@color/text_secondary" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#F0F0F0" />
+
+            <!-- Tab 4: Statistics -->
+            <LinearLayout
+                android:id="@+id/tabStats"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+
+                <TextView
+                    android:id="@+id/tvTabStatsText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Estadísticas"
+                    android:textSize="11sp"
                     android:textColor="@color/text_secondary" />
 
             </LinearLayout>
