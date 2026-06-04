@@ -3,6 +3,7 @@ package com.spectrum24ghz;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.CornerPathEffect;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -65,7 +66,10 @@ public class TimeGraphView extends View {
 
         linePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         linePaint.setStyle(Paint.Style.STROKE);
-        linePaint.setStrokeWidth(4.5f);
+        linePaint.setStrokeWidth(5.0f);
+        linePaint.setStrokeJoin(Paint.Join.ROUND);
+        linePaint.setStrokeCap(Paint.Cap.ROUND);
+        linePaint.setPathEffect(new CornerPathEffect(25));
 
         legendPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         legendPaint.setStyle(Paint.Style.FILL);
@@ -169,12 +173,25 @@ public class TimeGraphView extends View {
             }
         }
 
+        // Sort networks by their last seen RSSI value to only show the Top 5 strongest
+        List<Map.Entry<String, List<Integer>>> sortedNetworks = new ArrayList<>(networkData.entrySet());
+        sortedNetworks.sort((e1, e2) -> {
+            int last1 = e1.getValue().get(e1.getValue().size() - 1);
+            int last2 = e2.getValue().get(e2.getValue().size() - 1);
+            return Integer.compare(last2, last1); // Descending
+        });
+
+        // Keep only top 5
+        if (sortedNetworks.size() > 5) {
+            sortedNetworks = sortedNetworks.subList(0, 5);
+        }
+
         // Draw line graph for each active network inside sliding window range
         int index = 0;
         List<String> visibleLegend = new ArrayList<>();
         List<Integer> legendColors = new ArrayList<>();
 
-        for (Map.Entry<String, List<Integer>> entry : networkData.entrySet()) {
+        for (Map.Entry<String, List<Integer>> entry : sortedNetworks) {
             String bssid = entry.getKey();
             List<Integer> readings = entry.getValue();
             String label = networkNames.get(bssid);
@@ -204,10 +221,9 @@ public class TimeGraphView extends View {
             canvas.drawPath(linePath, linePaint);
 
             // Record legend
-            if (index < 6) {
-                visibleLegend.add(label);
-                legendColors.add(color);
-            }
+            visibleLegend.add(label);
+            legendColors.add(color);
+            
             index++;
         }
 
