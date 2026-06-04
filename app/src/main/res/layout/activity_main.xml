@@ -57,6 +57,15 @@
                     android:textColor="#FFCDD2"
                     android:layout_marginTop="1dp" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Materia: Comunicaciones Inalámbricas"
+                    android:textSize="9.5sp"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="italic"
+                    android:layout_marginTop="1dp" />
+
             </LinearLayout>
 
             <ImageButton
@@ -136,7 +145,7 @@
                 android:id="@+id/rvChannels"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="6dp"
+                android:paddingVertical="6dp"
                 android:clipToPadding="false"
                 android:visibility="visible"
                 tools:listitem="@layout/item_network" />
@@ -217,7 +226,7 @@
                     android:id="@+id/tvTabChannelsText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Gráfico Canal"
+                    android:text="Canales"
                     android:textSize="11.5sp"
                     android:textColor="@color/text_secondary" />
 

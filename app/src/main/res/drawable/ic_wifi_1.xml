@@ -3,12 +3,14 @@
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
-  <!-- Dot at the bottom -->
+  <!-- 1 bar: outer arc faded, middle arc faded, inner arc solid -->
+  <path
+      android:fillColor="#40000000"
+      android:pathData="M1,9l2,2c4.97,-4.97 13.03,-4.97 18,0l2,-2C16.93,2.93 7.08,2.93 1,9z" />
+  <path
+      android:fillColor="#40000000"
+      android:pathData="M5,13l2,2c2.76,-2.76 7.24,-2.76 10,0l2,-2C15.14,9.14 8.87,9.14 5,13z" />
   <path
       android:fillColor="#FFFFFFFF"
-      android:pathData="M12,21l-1.42,-1.42C10.2,19.2 12,17.4 12,15c0,1.2 0.8,2.2 1.42,3.58L12,21z" />
-  <!-- First small bar -->
-  <path
-      android:fillColor="#FFFFFFFF"
-      android:pathData="M8.64,15.36l1.42,1.42c1.2,-1.2 2.8,-1.8 4.4,-1.8c1.6,0 3.2,0.6 4.4,1.8l1.42,-1.42c-1.8,-1.8 -4.2,-2.8 -7.22,-2.8c-3.02,0 -5.42,1 -7.22,2.8z" />
+      android:pathData="M9,17l3,3l3,-3c-1.65,-1.66 -4.34,-1.66 -6,0z" />
 </vector>

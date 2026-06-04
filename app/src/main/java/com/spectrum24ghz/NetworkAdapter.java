@@ -1,7 +1,7 @@
 package com.spectrum24ghz;
 
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -39,8 +39,22 @@ public class NetworkAdapter extends RecyclerView.Adapter<NetworkAdapter.NetworkV
         void bind(ScannedNetwork net) {
             nb.tvSsid.setText(net.getSsid());
             nb.tvBssid.setText(net.getBssid());
-            nb.tvRssi.setText(net.getRssi() + " dBm");
+            nb.tvRssi.setText(String.valueOf(net.getRssi()));
             nb.progressSignal.setProgress(net.getSignalPercent());
+
+            // Build subtitle: Canal X · Security · Frequency MHz
+            String channelText = net.getChannel() == 0 ? "Desconocido" : "Canal " + net.getChannel();
+            String secLabel = net.getSecurityLabel();
+            String subInfo = channelText + "  ·  " + secLabel + "  ·  " + net.getFrequency() + " MHz";
+            nb.tvSubInfo.setText(subInfo);
+
+            // Lock icon: show lock for secured, lock_open for open
+            boolean isOpen = secLabel.toLowerCase().contains("open");
+            nb.ivLockIcon.setImageResource(isOpen ? R.drawable.ic_lock_open : R.drawable.ic_lock);
+            nb.ivLockIcon.setColorFilter(
+                    ContextCompat.getColor(nb.getRoot().getContext(),
+                            isOpen ? R.color.sig_weak : R.color.text_secondary)
+            );
 
             // Determine dynamic WiFi signal strength icon and color tint
             int percent = net.getSignalPercent();
@@ -65,13 +79,20 @@ public class NetworkAdapter extends RecyclerView.Adapter<NetworkAdapter.NetworkV
             }
 
             nb.ivSignalIcon.setImageResource(wifiIconRes);
-            nb.ivSignalIcon.setColorFilter(
-                    ContextCompat.getColor(nb.getRoot().getContext(), sigColorRes)
-            );
+            int sigColor = ContextCompat.getColor(nb.getRoot().getContext(), sigColorRes);
+            nb.ivSignalIcon.setColorFilter(sigColor);
+
+            // Tint the circular background to match signal color (with transparency)
+            GradientDrawable bgCircle = (GradientDrawable) nb.viewIconBg.getBackground().mutate();
+            bgCircle.setColor((sigColor & 0x00FFFFFF) | 0x1A000000); // ~10% opacity of signal color
+            nb.viewIconBg.setBackground(bgCircle);
 
             nb.progressSignal.setProgressTintList(
                     ContextCompat.getColorStateList(nb.getRoot().getContext(), sigColorRes)
             );
+
+            // Color the dBm value text too
+            nb.tvRssi.setTextColor(sigColor);
 
             itemView.setOnClickListener(v -> {
                 if (listener != null) {

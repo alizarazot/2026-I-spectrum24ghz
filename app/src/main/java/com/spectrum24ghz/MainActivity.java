@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             if (lastScanStartMs == 0L) return;
             long remaining = (SCAN_COOLDOWN_MS - (SystemClock.elapsedRealtime() - lastScanStartMs)) / 1000;
             if (remaining > 0) {
-                showStatus("Próximo escaneo en " + remaining + "s");
+                // Se quitó el texto de actualización automática/cuenta regresiva de la interfaz
                 countdownHandler.postDelayed(this, 1_000L);
             } else {
                 binding.tvScanStatus.setVisibility(View.GONE);
