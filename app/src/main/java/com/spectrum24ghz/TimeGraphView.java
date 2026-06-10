@@ -173,31 +173,30 @@ public class TimeGraphView extends View {
             }
         }
 
-        // Sort networks by their last seen RSSI value to only show the Top 5 strongest
-        List<Map.Entry<String, List<Integer>>> sortedNetworks = new ArrayList<>(networkData.entrySet());
-        sortedNetworks.sort((e1, e2) -> {
-            int last1 = e1.getValue().get(e1.getValue().size() - 1);
-            int last2 = e2.getValue().get(e2.getValue().size() - 1);
-            return Integer.compare(last2, last1); // Descending
-        });
-
-        // Keep only top 5
-        if (sortedNetworks.size() > 5) {
-            sortedNetworks = sortedNetworks.subList(0, 5);
-        }
-
         // Draw line graph for each active network inside sliding window range
         int index = 0;
         List<String> visibleLegend = new ArrayList<>();
         List<Integer> legendColors = new ArrayList<>();
 
-        for (Map.Entry<String, List<Integer>> entry : sortedNetworks) {
+        for (Map.Entry<String, List<Integer>> entry : networkData.entrySet()) {
             String bssid = entry.getKey();
             List<Integer> readings = entry.getValue();
             String label = networkNames.get(bssid);
 
             int color = colors[index % colors.length];
-            linePaint.setColor(color);
+            
+            // Adjust opacity and stroke width based on the latest signal strength
+            int lastRssi = readings.get(readings.size() - 1);
+            if (lastRssi < -80) { // Weak signal
+                linePaint.setColor(Color.argb(70, Color.red(color), Color.green(color), Color.blue(color)));
+                linePaint.setStrokeWidth(2.5f);
+            } else if (lastRssi < -60) { // Medium signal
+                linePaint.setColor(Color.argb(150, Color.red(color), Color.green(color), Color.blue(color)));
+                linePaint.setStrokeWidth(3.5f);
+            } else { // Strong signal
+                linePaint.setColor(color); // Full opacity
+                linePaint.setStrokeWidth(5.0f);
+            }
 
             Path linePath = new Path();
             boolean firstPoint = true;
@@ -220,9 +219,11 @@ public class TimeGraphView extends View {
 
             canvas.drawPath(linePath, linePaint);
 
-            // Record legend
-            visibleLegend.add(label);
-            legendColors.add(color);
+            // Record legend only for the top networks to avoid covering the whole screen
+            if (index < 6) {
+                visibleLegend.add(label);
+                legendColors.add(color);
+            }
             
             index++;
         }
